@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340.55 147.38">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Blackout-Midnight, Blackout;
+        font-size: 54.18px;
+      }
+
+      .cls-2 {
+        letter-spacing: -.01em;
+      }
+
+      .cls-3 {
+        letter-spacing: -.04em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-1" transform="translate(.69 47.24) scale(1.43 1)"><tspan x="0" y="0">THE MOST</tspan></text>
+    <text class="cls-1" transform="translate(4.92 93.44) scale(1.43 1)"><tspan class="cls-2" x="0" y="0">C</tspan><tspan x="32.18" y="0">OMMON </tspan><tspan class="cls-3" x="0" y="44.84">A</tspan><tspan x="34.19" y="44.84">CTION...</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,379 @@
+/* ==========================================================================
+   GENERAL
+   ========================================================================== */
+html, body {
+    /* max-width: 100% and overflow-x: hidden: These work together to lock the 
+       horizontal axis, ensuring that scaling animations or pulsating elements 
+       do not create unwanted whitespace or broken layouts outside the viewport. */
+    max-width: 100%;
+    overflow-x: hidden; 
+    margin: 0;
+    padding: 0;
+    color: black;
+    background-color: black;
+    scroll-behavior: smooth; /* Smooth fluid transition for anchor links */
+}
+
+/* Reset Paragraphs: Neutralizes margins for precise vertical centering within containers */
+.text-reveal p, 
+.hidden-content p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: inherit;
+}
+
+/* ==========================================================================
+   BACKGROUND ARCHITECTURE
+   ========================================================================== */
+.header-background {
+    position: fixed; /* Parallax effect: image stays locked while content flows */
+    z-index: 1; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-88%, -50%);
+    object-fit: contain;
+    /* Custom SVG cursor for architectural theme */
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" stroke="white" stroke-width="1" fill="rgba(255,255,255,0.2)"/></svg>') 15 15, auto;
+}
+
+.header-image {
+    width: 180%;
+    height: 180%;
+    object-fit: contain; /* Prevents architectural distortion */
+}
+
+/* ==========================================================================
+   PERSISTENT UI ELEMENTS (FIXED LAYERS)
+   ========================================================================== */
+.fixed-instruction {
+    font-family: 'Roboto Mono', monospace;
+    position: fixed;
+    top: 40px; 
+    left: 20px;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.6);
+    z-index: 10000; /* Highest stacking priority to prevent content containers 
+       from overlapping during the scroll. */
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.theme-toggle {
+    position: fixed;  /* Flexbox used here to placed the icon regardless of user's scailing */
+    top: 20px; 
+    right: 20px;
+    width: 45px; 
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%; 
+    /* display: flex, justify-content, align-items: Utilizes the Flexible Box 
+       Model to achieve absolute centering of the toggle icon within the circle. */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   INTERACTIVE CONTENT CONTAINERS 
+   ========================================================================== */
+/* Grouped Hover Container */
+.container1, .container3, .container4, .container5, .container7, 
+.container8, .container9, .container12, .container13 {
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    min-height: 100px; 
+    max-height: 100px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    /* transition: Smoothly animates the height change during hover */
+    transition: background-color 0.3s ease, max-height 0.5s ease;
+}
+
+/* Grouped Slide-box Containers */
+.container6, .container10, .container11 {
+    width: 100%;
+    min-height: 100px; 
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+/* Vertical Coordinate Mapping */
+.container1 { top: 612px; }
+.container3 { top: 1502px; } 
+.container4 { top: 1952px; }
+.container5 { top: 2432px; }
+.container6 { top: 1850px; }
+.container7 { top: 3420px; }
+.container8 { top: 3850px; }
+.container9 { top: 4350px; }
+.container10 { top: 3750px; }
+.container11 { top: 4300px; right: 2%; }
+.container12 { top: 5800px; }
+.container13 { top: 6250px; }
+
+/* Expansion State: Hover reveals hidden text content */
+.container1:hover, .container3:hover, .container4:hover, .container5:hover,
+.container7:hover, .container8:hover, .container9:hover, 
+.container12:hover, .container13:hover {
+    max-height: 400px;
+}
+
+/* Reveal Labels */
+.label-view {
+    font-size: 0.8rem;
+    color: rgb(255, 255, 255);
+    position: absolute;
+    transition: opacity 0.3s ease;
+}
+
+.text-reveal {
+    opacity: 0; /* Initial hidden state for detailed descriptions. */
+    color: #ffffff;
+    font-size: 0.8rem; 
+    line-height: 1.25;
+    text-align: left;
+    /* transition-delay: Ensures box expansion starts before text fades in */
+    transition: opacity 0.4s ease 0.2s; 
+    padding: 0 140px;
+    display: flex;
+    justify-content: center;
+}
+
+.container3 .text-reveal { font-size: 0.75rem; text-align: justify; }
+
+/* Activation Logic */
+.container1:hover .label-view, .container3:hover .label-view, .container4:hover .label-view, 
+.container5:hover .label-view, .container7:hover .label-view, .container8:hover .label-view, 
+.container9:hover .label-view, .container12:hover .label-view, .container13:hover .label-view {
+    opacity: 0;
+}
+
+.container1:hover .text-reveal, .container3:hover .text-reveal, .container4:hover .text-reveal, 
+.container5:hover .text-reveal, .container7:hover .text-reveal, .container8:hover .text-reveal, 
+.container9:hover .text-reveal, .container12:hover .text-reveal, .container13:hover .text-reveal {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   SLIDE-BOX (HORIZONTAL VARIETY)
+   ========================================================================== */
+.slide-box {
+    position: absolute;
+    right: 0; 
+    top: 1000px; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    color: white;
+    z-index: 10; 
+    width: 180px; 
+    height: 180px;   
+    /* transition: width: Enables a sliding animation from right to left */          
+    transition: width 0.5s ease-in-out;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Clips hidden text until expanded */
+}
+/* Asymmetrical layout choice */
+.container10 .slide-box { left: 3%; right: auto; }
+
+.slide-box:hover { width: 100%; }
+
+.trigger-label { font-size: 0.7rem; opacity: 0.8; text-align: center; padding: 10px; transition: opacity 0.3s; }
+.slide-box:hover .trigger-label { opacity: 0; }
+
+.hidden-content {
+    opacity: 0;
+    visibility: hidden;
+    color: white;
+    font-family: serif;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    text-align: justify;
+    width: 850px;
+    padding: 20px 40px;
+    transition: opacity 0.4s ease 0.3s;
+    position: absolute;
+    box-sizing: border-box;
+}
+
+.slide-box:hover .hidden-content { opacity: 1; visibility: visible; }
+
+.container8 .text-reveal, .container9 .text-reveal, .container13 .text-reveal {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+/* ==========================================================================
+   INTERACTIVE TRIGGERS & HOVER REVEALS
+   ========================================================================== */
+/* CTA Pulsating Styling */
+.blink-text {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    color: #ffffff; 
+    background-color: #000000; 
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    letter-spacing: 2px;
+    padding: 8px 16px;       
+    border-radius: 20px;     
+    /* display: inline-block: Allows the CTA to respect padding and borders 
+    correctly without disrupting the surrounding content */
+    display: inline-block;    
+    /* animation: blink: Triggers an infinite loop to draw the user's focus 
+    to interactive images. */
+    animation: blink 2s infinite; 
+    transition: all 0.3s ease;
+}
+
+@keyframes blink { 
+    /* Subtle opacity shift (0.2 to 1) creates a 'breathing' effect 
+       rather than a harsh one */
+    0%, 100% { opacity: 0.2; } 
+    50% { opacity: 1; } 
+}
+
+/* Click Feedback */
+.ripple {
+    position: absolute;
+    width: 10px; 
+    height: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    pointer-events: none; 
+    transform: translate(-50%, -50%);
+    animation: ripple-effect 0.6s linear;
+    z-index: 9999;
+}
+
+@keyframes ripple-effect { to { width: 150px; height: 150px; opacity: 0; } }
+
+/*  Reveal Container */
+.image-reveal {
+    /* position: fixed: Ensures that revealed images remain locked 
+       to the center of the viewport regardless of scroll. */
+    position: fixed; 
+    top: 180%; 
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 400px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease;
+    pointer-events: none; 
+    z-index: 1000;
+}
+
+.image-reveal img {
+    width: 100%; 
+    height: auto;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.hover-image-trigger { 
+    position: absolute; 
+    top: 820px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 20; 
+    text-align: center; 
+    cursor: pointer; 
+}
+
+.hover-image-trigger:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+.hover-image-trigger:hover .blink-text { animation: none; color: #000000; }
+
+/* Trigger 2: Skin-Swap variation */
+.trigger-2 { top: 1250px; left: auto; right: 3%; transform: none; }
+.trigger-2 .image-reveal { position: absolute; top: 150%; right: 1%; left: auto; width: 350px; transform: translateY(-50%) scale(1); }
+.trigger-2:hover .image-reveal { transform: translateY(-50%) scale(1.1); opacity: 1; visibility: visible; }
+
+/* Triggers 3 & 4 (Fixed Reveal) */
+.trigger-3 { top: 4600px; left: 50%; transform: translateX(-50%); }
+.trigger-3 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
+.trigger-3:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
+
+.trigger-4 { top: 6500px; left: 50%; transform: translateX(-50%); }
+.trigger-4 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
+.trigger-4:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
+
+/* ==========================================================================
+   THEME ADAPTATION (LIGHT MODE)
+   ========================================================================== */
+body.light-mode { background-color: #ffffff !important; color: #000000; min-height: 100vh; }
+html.light-mode { background-color: #ffffff; }
+
+body.light-mode .container1, body.light-mode .container3, body.light-mode .container4,
+body.light-mode .container5, body.light-mode .container7, body.light-mode .container8,
+body.light-mode .container9, body.light-mode .container12, body.light-mode .container13,
+body.light-mode .slide-box {
+    background-color: rgba(255, 255, 255, 0.85); 
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .label-view, body.light-mode .trigger-label,
+body.light-mode .text-reveal, body.light-mode .hidden-content { color: #000000; }
+
+body.light-mode .header-image { filter: invert(1) opacity(0.3); } /* Inverts blueprint for white theme */
+
+body.light-mode .blink-text { color: black; background-color: white; border: 1px solid black; }
+body.light-mode .fixed-instruction { color: rgba(0, 0, 0, 0.6); }
+
+body.light-mode .header-background {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" stroke="gray" stroke-width="1" fill="rgba(0,0,0,0.1)"/></svg>') 15 15, auto;
+}
+
+/* ==========================================================================
+   FOOTER NAVIGATION
+   provides an instant 'Escape Route' from the bottom, 
+   preventing user frustration from excessive upward scrolling.
+   ========================================================================== */
+.footer-nav {
+    position: absolute;
+    top: 6700px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 100px;
+    z-index: 10;
+}
+
+.back-to-top-btn {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-family: 'Roboto Mono', monospace;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.back-to-top-btn:hover {
+    color: #ffffff; 
+    letter-spacing: 4px;
+    }
+body.light-mode .back-to-top-btn {
+    color: rgba(0, 0, 0, 0.5);
+ }
