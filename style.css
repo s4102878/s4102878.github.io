@@ -5,23 +5,26 @@ html, body {
     /* max-width: 100% and overflow-x: hidden: These work together to lock the 
        horizontal axis, ensuring that scaling animations or pulsating elements 
        do not create unwanted whitespace or broken layouts outside the viewport. */
-    max-width: 100%;
-    overflow-x: hidden; 
-    margin: 0;
-    padding: 0;
-    color: black;
-    background-color: black;
-    scroll-behavior: smooth; /* Smooth fluid transition for anchor links */
-}
+  max-width: 100%;
+  overflow-x: hidden; 
+  /* Remove default spacing for precise alignment */
+  margin: 0;
+  padding: 0;
+  /* Base color scheme (dark mode by default) */
+  color: black;
+  background-color: black;
+  scroll-behavior: smooth; /* Smooth fluid transition for anchor links */
 
-/* Reset Paragraphs: Neutralizes margins for precise vertical centering within containers */
+/* Reset default paragraph styling inside interactive text containers.
+   This ensures that text aligns properly with container dimensions
+   and prevents inconsistent spacing between lines and sections. */
 .text-reveal p, 
 .hidden-content p {
-    margin: 0;
-    font-size: inherit;
-    line-height: inherit;
-    color: inherit;
-    text-align: inherit;
+ margin: 0;
+ font-size: inherit;
+ line-height: inherit;
+ color: inherit;
+ text-align: inherit;
 }
 
 /* ==========================================================================
@@ -29,12 +32,12 @@ html, body {
    ========================================================================== */
 .header-background {
     position: fixed; /* Parallax effect: image stays locked while content flows */
-    z-index: 1; 
+    z-index: 1; /* Lower z-index than content so content scrolls over it */
     top: 50%; 
     left: 50%; 
     transform: translate(-88%, -50%);
-    object-fit: contain;
-    /* Custom SVG cursor for architectural theme */
+    object-fit: contain; /* Prevent distortion of header image */
+    /* Custom SVG cursor for the theme */
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" stroke="white" stroke-width="1" fill="rgba(255,255,255,0.2)"/></svg>') 15 15, auto;
 }
 
@@ -54,11 +57,10 @@ html, body {
     left: 20px;
     font-size: 0.6rem;
     color: rgba(255, 255, 255, 0.6);
-    z-index: 10000; /* Highest stacking priority to prevent content containers 
-       from overlapping during the scroll. */
+    z-index: 10000;  /* Always above content for visibility */
     letter-spacing: 1px;
     transition: all 0.3s ease;
-    cursor: default;
+    cursor: default;  /* Instruction is non-interactive *
 }
 
 .theme-toggle {
@@ -69,18 +71,17 @@ html, body {
     height: 45px;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%; 
-    /* display: flex, justify-content, align-items: Utilizes the Flexible Box 
-       Model to achieve absolute centering of the toggle icon within the circle. */
+    border-radius: 50%; /* Circular toggle button */
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Center icon using flexbox */
     cursor: pointer;
     z-index: 9999;
     transition: all 0.3s ease;
 }
 
 .theme-toggle:hover {
+    /* Subtle scaling and brightness to indicate interactivity */
     transform: scale(1.1);
     background: rgba(255, 255, 255, 0.4);
 }
@@ -91,7 +92,7 @@ html, body {
 /* Grouped Hover Container */
 .container1, .container3, .container4, .container5, .container7, 
 .container8, .container9, .container12, .container13 {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay for text visibility */
     width: 100%;
     min-height: 100px; 
     max-height: 100px; 
@@ -119,7 +120,7 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
-/* Vertical Coordinate Mapping */
+/* Vertical position for each container */
 .container1 { top: 612px; }
 .container3 { top: 1502px; } 
 .container4 { top: 1952px; }
@@ -137,10 +138,12 @@ html, body {
 .container1:hover, .container3:hover, .container4:hover, .container5:hover,
 .container7:hover, .container8:hover, .container9:hover, 
 .container12:hover, .container13:hover {
-    max-height: 400px;
+    max-height: 400px; /* Expands to show text */
 }
 
 /* Reveal Labels */
+/* Labels act as signposts.
+   They fade away once hover, shifting focus to the answers. */
 .label-view {
     font-size: 0.8rem;
     color: rgb(255, 255, 255);
@@ -161,15 +164,17 @@ html, body {
     justify-content: center;
 }
 
-.container3 .text-reveal { font-size: 0.75rem; text-align: justify; }
+.container3 .text-reveal { 
+    font-size: 0.75rem; 
+    text-align: justify; }
 
-/* Activation Logic */
+/* Hides label when expanded */
 .container1:hover .label-view, .container3:hover .label-view, .container4:hover .label-view, 
 .container5:hover .label-view, .container7:hover .label-view, .container8:hover .label-view, 
 .container9:hover .label-view, .container12:hover .label-view, .container13:hover .label-view {
     opacity: 0;
 }
-
+/* Fade-in answer text */
 .container1:hover .text-reveal, .container3:hover .text-reveal, .container4:hover .text-reveal, 
 .container5:hover .text-reveal, .container7:hover .text-reveal, .container8:hover .text-reveal, 
 .container9:hover .text-reveal, .container12:hover .text-reveal, .container13:hover .text-reveal {
@@ -194,36 +199,45 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Clips hidden text until expanded */
+    overflow: hidden; /* Clips hidden text until hover */
 }
 /* Asymmetrical layout choice */
 .container10 .slide-box { left: 3%; right: auto; }
 
 .slide-box:hover { width: 100%; }
 
-.trigger-label { font-size: 0.7rem; opacity: 0.8; text-align: center; padding: 10px; transition: opacity 0.3s; }
-.slide-box:hover .trigger-label { opacity: 0; }
+.trigger-label { 
+font-size: 0.7rem; 
+opacity: 0.8; 
+text-align: center; 
+padding: 10px; 
+transition: opacity 0.3s; }
+
+.slide-box:hover .trigger-label { 
+opacity: 0; }
 
 .hidden-content {
-    opacity: 0;
-    visibility: hidden;
-    color: white;
-    font-family: serif;
-    font-size: 0.8rem;
-    line-height: 1.25;
-    text-align: justify;
-    width: 850px;
-    padding: 20px 40px;
-    transition: opacity 0.4s ease 0.3s;
-    position: absolute;
-    box-sizing: border-box;
+opacity: 0;
+visibility: hidden;
+color: white;
+font-family: serif;
+font-size: 0.8rem;
+line-height: 1.25;
+text-align: justify;
+width: 850px;
+padding: 20px 40px;
+transition: opacity 0.4s ease 0.3s;
+position: absolute;
+box-sizing: border-box;
 }
 
-.slide-box:hover .hidden-content { opacity: 1; visibility: visible; }
+.slide-box:hover .hidden-content { 
+opacity: 1; 
+visibility: visible; }
 
 .container8 .text-reveal, .container9 .text-reveal, .container13 .text-reveal {
-    padding-top: 30px;
-    padding-bottom: 30px;
+padding-top: 30px;
+padding-bottom: 30px;
 }
 
 /* ==========================================================================
@@ -231,26 +245,26 @@ html, body {
    ========================================================================== */
 /* CTA Pulsating Styling */
 .blink-text {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.7rem;
-    color: #ffffff; 
-    background-color: #000000; 
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    letter-spacing: 2px;
-    padding: 8px 16px;       
-    border-radius: 20px;     
-    /* display: inline-block: Allows the CTA to respect padding and borders 
-    correctly without disrupting the surrounding content */
-    display: inline-block;    
-    /* animation: blink: Triggers an infinite loop to draw the user's focus 
-    to interactive images. */
-    animation: blink 2s infinite; 
-    transition: all 0.3s ease;
+font-family: 'Roboto Mono', monospace;
+font-size: 0.7rem;
+color: #ffffff; 
+background-color: #000000; 
+border: 1px solid rgba(255, 255, 255, 0.4);
+letter-spacing: 2px;
+padding: 8px 16px;       
+border-radius: 20px;     
+/* display: inline-block: Allows the CTA to respect padding and borders 
+correctly without disrupting the surrounding content */
+display: inline-block;    
+/* animation: blink: Triggers an infinite loop to draw the user's focus 
+to interactive images. */
+animation: blink 2s infinite; 
+transition: all 0.3s ease;
 }
 
 @keyframes blink { 
-    /* Subtle opacity shift (0.2 to 1) creates a 'breathing' effect 
-       rather than a harsh one */
+   /* Blinking CTA uses a soft “breathing” animation,
+   drawing attention without aggressive motion. */
     0%, 100% { opacity: 0.2; } 
     50% { opacity: 1; } 
 }
@@ -303,28 +317,71 @@ html, body {
     cursor: pointer; 
 }
 
-.hover-image-trigger:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+.hover-image-trigger:hover .image-reveal { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translate(-50%, -50%) scale(1); }
 .hover-image-trigger:hover .blink-text { animation: none; color: #000000; }
 
 /* Trigger 2: Skin-Swap variation */
-.trigger-2 { top: 1250px; left: auto; right: 3%; transform: none; }
-.trigger-2 .image-reveal { position: absolute; top: 150%; right: 1%; left: auto; width: 350px; transform: translateY(-50%) scale(1); }
-.trigger-2:hover .image-reveal { transform: translateY(-50%) scale(1.1); opacity: 1; visibility: visible; }
+.trigger-2 { 
+    top: 1250px; 
+    left: auto; 
+    right: 3%; 
+    transform: none; }
+.trigger-2 .image-reveal { 
+    position: absolute; 
+    top: 150%; 
+    right: 1%; 
+    left: auto; 
+    width: 350px; 
+    transform: translateY(-50%) scale(1); }
+.trigger-2:hover .image-reveal { 
+    transform: translateY(-50%) scale(1.1);
+    opacity: 1; 
+    visibility: visible; }
 
 /* Triggers 3 & 4 (Fixed Reveal) */
-.trigger-3 { top: 4600px; left: 50%; transform: translateX(-50%); }
-.trigger-3 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
-.trigger-3:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
+.trigger-3 { 
+    top: 4600px; 
+    left: 50%; 
+    transform: translateX(-50%); }
+.trigger-3 .image-reveal { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) scale(0.9); }
+.trigger-3:hover .image-reveal { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translate(-50%, -50%) scale(1.1); }
 
-.trigger-4 { top: 6500px; left: 50%; transform: translateX(-50%); }
-.trigger-4 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
-.trigger-4:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
+.trigger-4 { 
+    top: 6500px; 
+    left: 50%; 
+    transform: translateX(-50%); }
+.trigger-4 .image-reveal { 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) scale(0.9); }
+.trigger-4:hover .image-reveal { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translate(-50%, -50%) scale(1.1); }
 
 /* ==========================================================================
    THEME ADAPTATION (LIGHT MODE)
+   /* Light mode reinterprets the same structure
+   without altering interaction logic,
+   ensuring accessibility and visual comfort. */
    ========================================================================== */
-body.light-mode { background-color: #ffffff !important; color: #000000; min-height: 100vh; }
-html.light-mode { background-color: #ffffff; }
+body.light-mode { 
+    background-color: #ffffff !important;
+    color: #000000; 
+    min-height: 100vh; }
+html.light-mode { 
+    background-color: #ffffff; }
 
 body.light-mode .container1, body.light-mode .container3, body.light-mode .container4,
 body.light-mode .container5, body.light-mode .container7, body.light-mode .container8,
@@ -335,12 +392,18 @@ body.light-mode .slide-box {
 }
 
 body.light-mode .label-view, body.light-mode .trigger-label,
-body.light-mode .text-reveal, body.light-mode .hidden-content { color: #000000; }
+body.light-mode .text-reveal, body.light-mode .hidden-content {
+    color: #000000; }
 
-body.light-mode .header-image { filter: invert(1) opacity(0.3); } /* Inverts blueprint for white theme */
+body.light-mode .header-image { 
+    filter: invert(1) opacity(0.3); } /* Inverts blueprint for white theme */
 
-body.light-mode .blink-text { color: black; background-color: white; border: 1px solid black; }
-body.light-mode .fixed-instruction { color: rgba(0, 0, 0, 0.6); }
+body.light-mode .blink-text { 
+    color: black; 
+    background-color: white; 
+    border: 1px solid black; }
+body.light-mode .fixed-instruction { 
+    color: rgba(0, 0, 0, 0.6); }
 
 body.light-mode .header-background {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" stroke="gray" stroke-width="1" fill="rgba(0,0,0,0.1)"/></svg>') 15 15, auto;
@@ -377,3 +440,4 @@ body.light-mode .header-background {
 body.light-mode .back-to-top-btn {
     color: rgba(0, 0, 0, 0.5);
  }
+ 
