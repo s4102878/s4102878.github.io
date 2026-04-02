@@ -11,13 +11,12 @@ html, body {
   margin: 0;
   padding: 0;
   /* Base color scheme (dark mode by default) */
-  color: black;
-  background-color: black;
-  scroll-behavior: smooth; /* Smooth fluid transition for anchor links */
+ color: black;
+ background-color: black;
+ scroll-behavior: smooth; /* Smooth fluid transition for anchor links */
+}
 
-/* Reset default paragraph styling inside interactive text containers.
-   This ensures that text aligns properly with container dimensions
-   and prevents inconsistent spacing between lines and sections. */
+/* Reset Paragraphs: Neutralizes margins for precise vertical centering within containers */
 .text-reveal p, 
 .hidden-content p {
  margin: 0;
@@ -60,11 +59,11 @@ html, body {
     z-index: 10000;  /* Always above content for visibility */
     letter-spacing: 1px;
     transition: all 0.3s ease;
-    cursor: default;  /* Instruction is non-interactive *
+    cursor: default;  /* Instruction is non-interactive */
 }
 
 .theme-toggle {
-    position: fixed;  /* Flexbox used here to placed the icon regardless of user's scailing */
+    position: fixed;  /* Stays visible at top-right while scrolling */
     top: 20px; 
     right: 20px;
     width: 45px; 
@@ -72,6 +71,8 @@ html, body {
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 50%; /* Circular toggle button */
+    /* display: flex, justify-content, align-items: Utilizes the Flexible Box 
+       Model to achieve absolute centering of the toggle icon within the circle. */
     display: flex;
     justify-content: center;
     align-items: center; /* Center icon using flexbox */
@@ -80,8 +81,8 @@ html, body {
     transition: all 0.3s ease;
 }
 
+/* Subtle scaling and brightness to indicate interactivity */
 .theme-toggle:hover {
-    /* Subtle scaling and brightness to indicate interactivity */
     transform: scale(1.1);
     background: rgba(255, 255, 255, 0.4);
 }
@@ -92,7 +93,7 @@ html, body {
 /* Grouped Hover Container */
 .container1, .container3, .container4, .container5, .container7, 
 .container8, .container9, .container12, .container13 {
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay for text visibility */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay */
     width: 100%;
     min-height: 100px; 
     max-height: 100px; 
@@ -106,7 +107,7 @@ html, body {
     transition: background-color 0.3s ease, max-height 0.5s ease;
 }
 
-/* Grouped Slide-box Containers */
+/* Slide-box containers: horizontally expanding hidden content */
 .container6, .container10, .container11 {
     width: 100%;
     min-height: 100px; 
@@ -120,7 +121,7 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
-/* Vertical position for each container */
+/* Vertical Coordinate Mapping */
 .container1 { top: 612px; }
 .container3 { top: 1502px; } 
 .container4 { top: 1952px; }
@@ -141,9 +142,8 @@ html, body {
     max-height: 400px; /* Expands to show text */
 }
 
-/* Reveal Labels */
 /* Labels act as signposts.
-   They fade away once hover, shifting focus to the answers. */
+   They fade away once expanded, shifting focus to detailed content.  */
 .label-view {
     font-size: 0.8rem;
     color: rgb(255, 255, 255);
@@ -168,13 +168,13 @@ html, body {
     font-size: 0.75rem; 
     text-align: justify; }
 
-/* Hides label when expanded */
+/* Activation Logic */
 .container1:hover .label-view, .container3:hover .label-view, .container4:hover .label-view, 
 .container5:hover .label-view, .container7:hover .label-view, .container8:hover .label-view, 
 .container9:hover .label-view, .container12:hover .label-view, .container13:hover .label-view {
     opacity: 0;
 }
-/* Fade-in answer text */
+
 .container1:hover .text-reveal, .container3:hover .text-reveal, .container4:hover .text-reveal, 
 .container5:hover .text-reveal, .container7:hover .text-reveal, .container8:hover .text-reveal, 
 .container9:hover .text-reveal, .container12:hover .text-reveal, .container13:hover .text-reveal {
@@ -199,7 +199,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Clips hidden text until hover */
+    overflow: hidden; /* Clips hidden text until expanded */
 }
 /* Asymmetrical layout choice */
 .container10 .slide-box { left: 3%; right: auto; }
@@ -211,7 +211,8 @@ font-size: 0.7rem;
 opacity: 0.8; 
 text-align: center; 
 padding: 10px; 
-transition: opacity 0.3s; }
+transition: opacity 0.3s;
+ }
 
 .slide-box:hover .trigger-label { 
 opacity: 0; }
@@ -243,7 +244,8 @@ padding-bottom: 30px;
 /* ==========================================================================
    INTERACTIVE TRIGGERS & HOVER REVEALS
    ========================================================================== */
-/* CTA Pulsating Styling */
+/* Blinking CTA uses a soft “breathing” animation,
+   drawing attention without aggressive motion. */
 .blink-text {
 font-family: 'Roboto Mono', monospace;
 font-size: 0.7rem;
@@ -263,8 +265,8 @@ transition: all 0.3s ease;
 }
 
 @keyframes blink { 
-   /* Blinking CTA uses a soft “breathing” animation,
-   drawing attention without aggressive motion. */
+    /* Subtle opacity shift (0.2 to 1) creates a 'breathing' effect 
+       rather than a harsh one */
     0%, 100% { opacity: 0.2; } 
     50% { opacity: 1; } 
 }
@@ -324,51 +326,18 @@ transition: all 0.3s ease;
 .hover-image-trigger:hover .blink-text { animation: none; color: #000000; }
 
 /* Trigger 2: Skin-Swap variation */
-.trigger-2 { 
-    top: 1250px; 
-    left: auto; 
-    right: 3%; 
-    transform: none; }
-.trigger-2 .image-reveal { 
-    position: absolute; 
-    top: 150%; 
-    right: 1%; 
-    left: auto; 
-    width: 350px; 
-    transform: translateY(-50%) scale(1); }
-.trigger-2:hover .image-reveal { 
-    transform: translateY(-50%) scale(1.1);
-    opacity: 1; 
-    visibility: visible; }
+.trigger-2 { top: 1250px; left: auto; right: 3%; transform: none; }
+.trigger-2 .image-reveal { position: absolute; top: 150%; right: 1%; left: auto; width: 350px; transform: translateY(-50%) scale(1); }
+.trigger-2:hover .image-reveal { transform: translateY(-50%) scale(1.1); opacity: 1; visibility: visible; }
 
 /* Triggers 3 & 4 (Fixed Reveal) */
-.trigger-3 { 
-    top: 4600px; 
-    left: 50%; 
-    transform: translateX(-50%); }
-.trigger-3 .image-reveal { 
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%) scale(0.9); }
-.trigger-3:hover .image-reveal { 
-    opacity: 1; 
-    visibility: visible; 
-    transform: translate(-50%, -50%) scale(1.1); }
+.trigger-3 { top: 4600px; left: 50%; transform: translateX(-50%); }
+.trigger-3 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
+.trigger-3:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
 
-.trigger-4 { 
-    top: 6500px; 
-    left: 50%; 
-    transform: translateX(-50%); }
-.trigger-4 .image-reveal { 
-    position: fixed; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%) scale(0.9); }
-.trigger-4:hover .image-reveal { 
-    opacity: 1; 
-    visibility: visible; 
-    transform: translate(-50%, -50%) scale(1.1); }
+.trigger-4 { top: 6500px; left: 50%; transform: translateX(-50%); }
+.trigger-4 .image-reveal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); }
+.trigger-4:hover .image-reveal { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1.1); }
 
 /* ==========================================================================
    THEME ADAPTATION (LIGHT MODE)
@@ -376,12 +345,8 @@ transition: all 0.3s ease;
    without altering interaction logic,
    ensuring accessibility and visual comfort. */
    ========================================================================== */
-body.light-mode { 
-    background-color: #ffffff !important;
-    color: #000000; 
-    min-height: 100vh; }
-html.light-mode { 
-    background-color: #ffffff; }
+body.light-mode { background-color: #ffffff !important; color: #000000; min-height: 100vh; }
+html.light-mode { background-color: #ffffff; }
 
 body.light-mode .container1, body.light-mode .container3, body.light-mode .container4,
 body.light-mode .container5, body.light-mode .container7, body.light-mode .container8,
@@ -392,18 +357,12 @@ body.light-mode .slide-box {
 }
 
 body.light-mode .label-view, body.light-mode .trigger-label,
-body.light-mode .text-reveal, body.light-mode .hidden-content {
-    color: #000000; }
+body.light-mode .text-reveal, body.light-mode .hidden-content { color: #000000; }
 
-body.light-mode .header-image { 
-    filter: invert(1) opacity(0.3); } /* Inverts blueprint for white theme */
+body.light-mode .header-image { filter: invert(1) opacity(0.3); } /* Inverts blueprint for white theme */
 
-body.light-mode .blink-text { 
-    color: black; 
-    background-color: white; 
-    border: 1px solid black; }
-body.light-mode .fixed-instruction { 
-    color: rgba(0, 0, 0, 0.6); }
+body.light-mode .blink-text { color: black; background-color: white; border: 1px solid black; }
+body.light-mode .fixed-instruction { color: rgba(0, 0, 0, 0.6); }
 
 body.light-mode .header-background {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" stroke="gray" stroke-width="1" fill="rgba(0,0,0,0.1)"/></svg>') 15 15, auto;
@@ -440,4 +399,3 @@ body.light-mode .header-background {
 body.light-mode .back-to-top-btn {
     color: rgba(0, 0, 0, 0.5);
  }
- 
