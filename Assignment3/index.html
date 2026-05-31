@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What should be excavated slowly</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+    <div class="ambient-bg"></div>
+
+    <main class="canvas">
+        
+        <div class="menu-container">
+            <button class="info-btn" id="info-btn">i</button>
+            <span class="menu-label">excavate theme:</span>
+            <div class="custom-dropdown" id="custom-dropdown">
+                <div class="dropdown-selected" id="dropdown-selected">all</div>
+                
+                <ul class="dropdown-options" id="dropdown-options">
+                    <li data-value="all" class="active">all</li>
+                    <li data-value="beauty">beauty</li>
+                    <li data-value="time">time</li>
+                    <li data-value="language">language</li>
+                </ul>
+                
+            </div>
+
+            
+        </div>
+
+        <div class="info-panel-overlay" id="info-panel-overlay">
+    <div class="info-panel">
+        <button class="info-close-btn" id="info-close-btn">&times;</button>
+        <h3>About This Project</h3>
+        <p>This is an interactive poetry excavation space where words are hidden within the fabric of time, beauty, and language.</p>
+       
+    </div>
+</div>
+
+        <div class="center-visual" id="center-visual">
+            <div class="clock-dial">
+                <div class="clock-hand"></div>
+            </div>
+
+            <div class="tree-rings-container" id="tree-rings-container"></div>
+            
+            <div class="flower-container">
+                <div class="flower-stem"></div>
+                
+                <div class="flower-petals">
+                    <div class="petal-item p1"></div>
+                    <div class="petal-item p2"></div>
+                    <div class="petal-item p3"></div>
+                    <div class="petal-item p4"></div>
+                    <div class="petal-item p5"></div>
+                </div>
+                
+                <div class="flower-center"></div>
+
+                
+            </div>
+        </div>
+
+        <div class="hud">
+            <p>Excavation Progress: <span id="progress-percentage">0%</span></p>
+        </div>
+
+        <div id="digging-zone" class="digging-zone"></div>
+
+        <div class="poetry-panel">
+            <h3>excavated trace:</h3>
+            <ul id="poem-list">
+                <li class="hint">hover over the space to dig... [cite: 12, 106]</li>
+            </ul>
+        </div>
+    </main>
+    <div class="sparkle-container" id="sparkle-container"></div>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 683.3 172.81">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: MilligramMacroTrial-Regular, 'Milligram Macro Trial';
+        font-size: 150px;
+      }
+
+      .cls-2 {
+        letter-spacing: -.02em;
+      }
+
+      .cls-3 {
+        letter-spacing: .03em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <text class="cls-1" transform="translate(0 126.97)"><tspan x="0" y="0">B</tspan><tspan class="cls-3" x="76.05" y="0">e</tspan><tspan x="140.85" y="0">aut</tspan><tspan class="cls-2" x="320.24" y="0">y</tspan></text>
+  </g>
+</svg>
