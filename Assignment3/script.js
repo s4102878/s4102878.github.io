@@ -1,22 +1,16 @@
 // Phân loại các nhóm chữ dựa theo ý tưởng tài liệu
 let isReversing = false; // Biến cờ kiểm soát trạng thái thu hồi ngược
 const poolOfWords = [
-    { text: "stumble upon words, once found, cannot be forgotten", category: "language" },
     { text: "excavated slowly?", category: "time" },
-    { text: "maybe it is our choice what to keep", category: "language" },
     { text: "searching takes time", category: "time" },
     { text: "patience", category: "time" },
-    { text: "what we find will follow us", category: "language" },
     { text: "formation", category: "beauty" },
     { text: "tree rings", category: "time" },
     { text: "gradual unveiling", category: "beauty" },
     { text: "temporal", category: "time" },
     { text: "floral blooming", category: "beauty" },
     { text: "budding", category: "beauty" },
-    { text: "slow", category: "beauty" },
-    { text: "honestly", category: "language" },
-    { text: "tell me a story", category: "language" },
-    { text: "something", category: "language" }
+    { text: "slow", category: "beauty" }
 ];
 
 let activeWords = [...poolOfWords]; // Tập hợp các từ hiện tại đang hiển thị
@@ -182,7 +176,7 @@ function animateClockAndRadar() {
 }
 
 // ==========================================================================
-// CẬP NHẬT HÀM TIẾN TRÌNH: HỖ TRỢ CO GIÃN ĐỘNG THEO CẢ 2 CHIỀU TĂNG/GIẢM
+// CẬP NHẬT HÀM TIẾN TRÌNH: SỬA TRIỆT ĐỂ LỖI ĐÈ STYLE HOÀN TOÀN Ở CHẾ ĐỘ LANGUAGE
 // ==========================================================================
 function updateProgress() {
     const totalDiscoverable = activeWords.length;
@@ -193,27 +187,38 @@ function updateProgress() {
     
     progressPercentage.innerText = `${percentage}%`;
     
-    // Thu hồi/Xòe kích thước bông hoa tịnh tiến chuẩn xác theo percentage
-    const newScale = 0.2 + (percentage / 100) * 1.5; 
-    document.documentElement.style.setProperty('--bloom-scale', newScale);
-    
-    const maxRotationP1P5 = (percentage / 100) * 85; 
-    const maxRotationP2P4 = (percentage / 100) * 45; 
-
-    const p1 = document.querySelector('.petal-item.p1');
-    const p2 = document.querySelector('.petal-item.p2');
-    const p3 = document.querySelector('.petal-item.p3'); 
-    const p4 = document.querySelector('.petal-item.p4');
-    const p5 = document.querySelector('.petal-item.p5');
-
-    if (p1) p1.style.transform = `translate(-50%, 0) rotate(${-maxRotationP1P5}deg)`;
-    if (p2) p2.style.transform = `translate(-50%, 0) rotate(${-maxRotationP2P4}deg)`;
-    if (p3) p3.style.transform = `translate(-50%, 0) rotate(0deg)`; 
-    if (p4) p4.style.transform = `translate(-50%, 0) rotate(${maxRotationP2P4}deg)`;
-    if (p5) p5.style.transform = `translate(-50%, 0) rotate(${maxRotationP1P5}deg)`;
-
+    // LẤY CHẾ ĐỘ MENU HIỆN TẠI ĐỂ KIỂM TRA TRƯỚC KHI ÉP SỰ KIỆN LÊN HOA
     const activeOption = document.querySelector('#dropdown-options li.active');
     const currentTheme = activeOption ? activeOption.getAttribute('data-value') : 'all';
+
+    // Điều khiển ép transform cho hoa nếu đang ở chế độ hiển thị hoa (all hoặc beauty)
+    if (currentTheme === 'all' || currentTheme === 'beauty') {
+        const newScale = 0.2 + (percentage / 100) * 1.5; 
+        document.documentElement.style.setProperty('--bloom-scale', newScale);
+        
+        const maxRotationP1P5 = (percentage / 100) * 85; 
+        const maxRotationP2P4 = (percentage / 100) * 45; 
+
+        const p1 = document.querySelector('.petal-item.p1');
+        const p2 = document.querySelector('.petal-item.p2');
+        const p3 = document.querySelector('.petal-item.p3'); 
+        const p4 = document.querySelector('.petal-item.p4');
+        const p5 = document.querySelector('.petal-item.p5');
+
+        if (p1) p1.style.transform = `translate(-50%, 0) rotate(${-maxRotationP1P5}deg)`;
+        if (p2) p2.style.transform = `translate(-50%, 0) rotate(${-maxRotationP2P4}deg)`;
+        if (p3) p3.style.transform = `translate(-50%, 0) rotate(0deg)`; 
+        if (p4) p4.style.transform = `translate(-50%, 0) rotate(${maxRotationP2P4}deg)`;
+        if (p5) p5.style.transform = `translate(-50%, 0) rotate(${maxRotationP1P5}deg)`;
+    } 
+    // KHẮC PHỤC: Nếu ở theme language hoặc time, phải xóa SẠCH SÀNH SANH inline style của hoa lập tức!
+    else {
+        document.documentElement.style.removeProperty('--bloom-scale');
+        const petals = document.querySelectorAll('.petal-item');
+        petals.forEach(petal => {
+            petal.style.transform = ''; 
+        });
+    }
 
     // Xử lý kích hoạt trạng thái đỉnh điểm 100%
     if (percentage === 100) {
@@ -223,22 +228,26 @@ function updateProgress() {
         if (currentTheme === 'time' && treeRingsContainer) {
             treeRingsContainer.classList.add('pulse-all');
         }
-        if (!animationFrameId) {
-            animateClockAndRadar();
+        
+        // Chỉ kích hoạt quay kim đồng hồ nếu chế độ hiện tại cho phép hiển thị nó
+        if (currentTheme !== 'beauty' && currentTheme !== 'language') {
+            if (!animationFrameId) {
+                animateClockAndRadar();
+            }
         }
     } 
-    // Khi rớt khỏi mốc 100% (Quy trình thu hồi ngược đang diễn ra)
+    // Khi rớt khỏi mốc 100% (Hoặc khi chuyển danh mục trống)
     else {
-        // Tắt hiệu ứng mạch đập gợn sóng của vân gỗ
         if (treeRingsContainer) {
             treeRingsContainer.classList.remove('pulse-all');
         }
-        // Dọn sạch đốm sáng lấp lánh
         if (sparkleContainer) {
             sparkleContainer.innerHTML = '';
         }
-        // NẾU GIẢM HOÀN TOÀN VỀ 0%: Dừng kim đồng hồ quay liên tục và reset góc kim về thẳng đứng
-        if (percentage === 0) {
+        
+        // NẾU GIẢM HOÀN TOÀN VỀ 0% (Hoặc khi chuyển sang danh mục rỗng như language):
+        // Dừng hoàn toàn kim đồng hồ quay liên tục và reset sạch sẽ style của kim
+        if (percentage === 0 || currentTheme === 'language') {
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
@@ -339,7 +348,7 @@ dropdownOptions.querySelectorAll('li').forEach(option => {
         }
         
         currentClockAngle = 0;
-        isReversing = false; // ĐÃ SỬA: Khởi tạo lại cờ ngược về mặc định khi người dùng chuyển đổi theme menu
+        isReversing = false; // Khởi tạo lại cờ ngược về mặc định khi người dùng chuyển đổi theme menu
         
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);

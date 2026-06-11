@@ -1,5 +1,5 @@
     :root {
-        --bg-color: #f2e7c9;
+        
         --text-primary: #5c4d3c;
         --text-faded: rgba(92, 77, 60, 0.15);
         --accent-color: #8fa87b;
@@ -25,14 +25,7 @@
 
 
     .ambient-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.05) 100%);
-        z-index: 1;
-        pointer-events: none;
+        background: transparent;
     }
 
     .canvas {
@@ -205,7 +198,7 @@
         to { opacity: 1; transform: translateY(0); }
     }
     :root {
-        --bg-color: #f2e7c9;
+        --bg-color: #000000;
         --text-primary: #5c4d3c;
         --text-faded: rgba(92, 77, 60, 0.15);
         --accent-color: #8fa87b;
@@ -219,24 +212,13 @@
     }
 
     body {
-        background-color: var(--bg-color);
+        background-color:#eaeae5;
         font-family: 'Courier New', Courier, monospace;
         color: var(--text-primary);
         overflow: hidden;
         height: 100vh;
     }
 
-    /* Lớp nền mờ ảo */
-    .ambient-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.05) 100%);
-        z-index: 1;
-        pointer-events: none;
-    }
 
     .canvas {
         position: relative;
@@ -712,74 +694,13 @@
    ========================================================================== */
 
 /* Khung bọc tổng thể nằm chuẩn tâm đồng hồ */
-.tree-rings-container {
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
+
 
 /* Chỉ hiển thị khi dropdown chọn chế độ TIME (tức là khi có class .hide-flower) */
 .center-visual.hide-flower .tree-rings-container {
     opacity: 1;
 }
 
-/* Định dạng từng vòng vân gỗ đơn lẻ được sinh ra từ JS */
-.tree-ring {
-    position: absolute;
-    border: 1px solid var(--text-primary);
-    border-radius: 50%;
-    background-color: var(--bg-color-tree-rings, #88775e);
-    opacity: 0;
-    
-    /* Lấy kích thước động qua CSS Variable do JS truyền xuống */
-    width: var(--ring-size, 20px);
-    height: var(--ring-size, 20px);
-    
-    /* Hiệu ứng xuất hiện mượt mà giống như vân gỗ mọc tự nhiên */
-    animation: growRing 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
-}
-
-@keyframes growRing {
-    from {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 0.35; /* Độ mờ vừa phải để khi chồng nhiều lớp lên nhau nhìn vẫn tinh tế */
-    }
-}
-
-/* HIỆU ỨNG ĐẶC BIỆT KHI ĐẠT 100%: Các vòng vân lan tỏa ra ngoài vô hạn */
-.tree-rings-container.pulse-all .tree-ring {
-    animation: ringRadiate 3s ease-in-out infinite;
-    /* Tạo độ trễ ngẫu nhiên một chút cho các vòng để hiệu ứng gợn sóng mượt hơn */
-    animation-delay: calc(var(--ring-index, 0) * 0.15s);
-}
-
-@keyframes ringRadiate {
-    0% {
-        transform: scale(1);
-        opacity: 0.4;
-    }
-    50% {
-        opacity: 0.1;
-    }
-    100% {
-        transform: scale(1.4); /* Lan tỏa rộng vượt qua cả rìa đồng hồ */
-        opacity: 0;
-    }
-}
 
 /* ==========================================================================
    INFORMATION BUTTON & PANEL SYSTEM
@@ -878,4 +799,34 @@
 
 .info-close-btn:hover {
     opacity: 1;
+}
+
+/* ==========================================================================
+   ẨN HIỆN TRIỆT ĐỂ CHO CÁC CHẾ ĐỘ THỜI GIAN VÀ NGÔN NGỮ (CSS CHUẨN)
+   ========================================================================== */
+
+/* 1. Khi ở chế độ BEAUTY hoặc LANGUAGE (có class .hide-clock): Ẩn hoàn toàn đồng hồ */
+.center-visual.hide-clock .clock-dial,
+.center-visual.hide-clock .clock-hand {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* 2. Khi ở chế độ TIME hoặc LANGUAGE (có class .hide-flower): Ẩn SẠCH SÀNH SANH toàn bộ cấu trúc hoa */
+.center-visual.hide-flower .flower-container,
+.center-visual.hide-flower .flower-stem,
+.center-visual.hide-flower .flower-petals,
+.center-visual.hide-flower .petal-item,
+.center-visual.hide-flower .flower-center {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Thêm transition mặc định cho các thành phần con để lúc chuyển đổi danh mục không bị giật lag */
+.clock-dial, .clock-hand, .flower-container, .flower-stem, .petal-item, .flower-center {
+    transition: opacity 0.4s ease, transform 0.4s ease-out, visibility 0.4s ease;
 }
