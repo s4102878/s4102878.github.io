@@ -1,5 +1,5 @@
 // Phân loại các nhóm chữ dựa theo ý tưởng tài liệu
-let isReversing = false; // Biến cờ kiểm soát trạng thái thu hồi ngược
+let isReversing = false;
 const poolOfWords = [
     { text: "excavated slowly?", category: "time" },
     { text: "searching takes time", category: "time" },
@@ -10,27 +10,53 @@ const poolOfWords = [
     { text: "temporal", category: "time" },
     { text: "floral blooming", category: "beauty" },
     { text: "budding", category: "beauty" },
-    { text: "slow", category: "beauty" }
+    { text: "slow", category: "beauty" },
+    { text: "isolated stars", category: "language" },
+    { text: "emerging connections", category: "language" },
+    { text: "constellation forms", category: "language" },
+    { text: "many languages", category: "language" },
+    { text: "human connection", category: "language" }
 ];
 
-let activeWords = [...poolOfWords]; // Tập hợp các từ hiện tại đang hiển thị
+let activeWords = [...poolOfWords];
 let foundCount = 0;
 const diggingZone = document.getElementById('digging-zone');
 const poemList = document.getElementById('poem-list');
 const progressPercentage = document.getElementById('progress-percentage');
 const centerVisual = document.getElementById('center-visual');
 const sparkleContainer = document.getElementById('sparkle-container'); 
-const treeRingsContainer = document.getElementById('tree-rings-container'); // Container vân gỗ
+const treeRingsContainer = document.getElementById('tree-rings-container');
+const cocoonContainer = document.getElementById('cocoon-container');
 
 let wordElementsArray = []; 
 let animationFrameId;
 let currentClockAngle = 0; 
 const rotationSpeed = 0.3; 
 
+// SOUND
+const clickSound = new Audio('soundshelfstudio-ui-hover-for-interfaces-519788.mp3');
+clickSound.volume = 0.5;
+
+function playClickSound() {
+    clickSound.currentTime = 0;
+    clickSound.play();
+}
+
+// Helper: set transform trên container (giữ translate + scale, chỉ đổi rotate)
+function setClockRotation(angleDeg) {
+    const container = document.querySelector('.clock-hand-container');
+    if (container) {
+        container.style.transform = `translate(-50%, -100%) rotate(${angleDeg}deg)`;
+    }
+}
+
 function initOrbitLayout() {
     wordElementsArray = []; 
     diggingZone.innerHTML = ''; 
     
+    const activeOption = document.querySelector('#dropdown-options li.active');
+    const currentTheme = activeOption ? activeOption.getAttribute('data-value') : 'all';
+
     const totalWords = activeWords.length;
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
@@ -40,6 +66,10 @@ function initOrbitLayout() {
         const wordEl = document.createElement('span');
         wordEl.innerText = item.text;
         wordEl.classList.add('excavated-word');
+        
+        if (currentTheme === 'all') {
+            wordEl.style.display = 'none';
+        }
         
         const angleRadian = (index / totalWords) * 2 * Math.PI - (Math.PI / 2);
         
@@ -56,68 +86,54 @@ function initOrbitLayout() {
         wordEl.style.setProperty('--unveil-delay', `${delayTime}s`);
         
         wordEl.addEventListener('click', () => {
+            playClickSound(); // SOUND
             const totalDiscoverable = activeWords.length;
             if (totalDiscoverable === 0) return;
 
             let currentPercentage = Math.round((foundCount / totalDiscoverable) * 100);
 
-            // BẬT CHẾ ĐỘ THU HỒI NGƯỢC: Khi chạm ngưỡng đỉnh điểm 100%
             if (currentPercentage === 100) {
                 isReversing = true;
             }
 
-            // ==========================================================================
-            // QUY TRÌNH 1: KHAI QUẬT (XUÔI) - Chạy khi isReversing đang là false
-            // ==========================================================================
             if (!isReversing) {
                 if (!wordEl.classList.contains('found') && foundCount < totalDiscoverable) {
                     wordEl.classList.add('found');
                     foundCount++;
                     
                     const nextPercentage = Math.round((foundCount / totalDiscoverable) * 100);
-                    if (nextPercentage < 100) {
-                        currentClockAngle = angleDegree;
-                        const clockHand = document.querySelector('.clock-hand');
-                        if (clockHand) {
-                            clockHand.style.transform = `rotate(${currentClockAngle}deg)`;
-                        }
+                    
+                    if (nextPercentage <= 100) {
+                        currentClockAngle = angleDegree; 
+                        setClockRotation(currentClockAngle);
                     }
 
-                    // Tạo vòng gỗ nếu ở chế độ TIME
-                    const activeOption = document.querySelector('#dropdown-options li.active');
-                    const currentTheme = activeOption ? activeOption.getAttribute('data-value') : 'all';
                     if (currentTheme === 'time') {
-                        createTreeRing(foundCount);
+                        updateSVGRings();
                     }
 
                     updateProgress();
                     addToPoemJournal(item.text);
                 }
             } 
-            // ==========================================================================
-            // QUY TRÌNH 2: THU HỒI (NGƯỢC ĐẾN 0%) - Chạy khi isReversing đã bật thành true
-            // ==========================================================================
             else {
                 if (wordEl.classList.contains('found')) {
-                    // 1. Gỡ class found để chữ mờ lại như cũ
                     wordEl.classList.remove('found');
-                    
-                    // 2. Giảm số lượng từ tìm thấy
                     foundCount--;
 
-                    // 3. Xóa vòng gỗ ngoài cùng nếu ở chế độ TIME
-                    if (treeRingsContainer && treeRingsContainer.lastChild) {
-                        treeRingsContainer.removeChild(treeRingsContainer.lastChild);
+                    currentClockAngle = angleDeg;
+                    const container = document.querySelector('.clock-hand-container');
+                    if (container) container.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+                    setClockRotation(currentClockAngle);
+
+                    if (currentTheme === 'time') {
+                        updateSVGRings();
                     }
 
-                    // 4. Cập nhật tiến độ, co hoa, và xóa thơ
                     updateProgress();
                     removeFromPoemJournal(item.text);
 
-                    // 5. Tính toán lại phần trăm sau khi giảm để check mốc 0%
                     let newPercentage = Math.round((foundCount / totalDiscoverable) * 100);
-                    
-                    // Khi đã thu hồi hoàn toàn về tận 0%, tắt hẳn trạng thái thu hồi ngược để chơi lại từ đầu
                     if (newPercentage === 0) {
                         isReversing = false;
                     }
@@ -133,22 +149,26 @@ function initOrbitLayout() {
         });
     });
 
-    const clockHand = document.querySelector('.clock-hand');
-    if (clockHand && !animationFrameId) {
-        clockHand.style.transform = `rotate(${currentClockAngle}deg)`;
-    }
-
+    setClockRotation(currentClockAngle);
     updateRadarScan();
 }
 
-function createTreeRing(ringIndex) {
-    if (!treeRingsContainer) return;
-    const ring = document.createElement('div');
-    ring.classList.add('tree-ring');
-    const ringSize = 16 + (ringIndex * 45); 
-    ring.style.setProperty('--ring-size', `${ringSize}px`);
-    ring.style.setProperty('--ring-index', ringIndex);
-    treeRingsContainer.appendChild(ring);
+function updateSVGRings() {
+    const totalDiscoverable = activeWords.length;
+    if (totalDiscoverable === 0) return;
+
+    const ringsToReveal = Math.floor((foundCount / totalDiscoverable) * 6);
+
+    for (let i = 1; i <= 6; i++) {
+        const ringEl = document.getElementById(`svg-ring-${i}`);
+        if (ringEl) {
+            if (i <= ringsToReveal) {
+                ringEl.classList.add('active');
+            } else {
+                ringEl.classList.remove('active');
+            }
+        }
+    }
 }
 
 function updateRadarScan() {
@@ -167,17 +187,15 @@ function updateRadarScan() {
 
 function animateClockAndRadar() {
     currentClockAngle = currentClockAngle + rotationSpeed;
-    const clockHand = document.querySelector('.clock-hand');
-    if (clockHand) {
-        clockHand.style.transform = `rotate(${currentClockAngle}deg)`;
+    const container = document.querySelector('.clock-hand-container');
+    if (container) {
+        container.style.transition = 'none';
+        container.style.transform = `translate(-50%, -100%) rotate(${currentClockAngle}deg)`;
     }
     updateRadarScan();
     animationFrameId = requestAnimationFrame(animateClockAndRadar);
 }
 
-// ==========================================================================
-// CẬP NHẬT HÀM TIẾN TRÌNH: SỬA TRIỆT ĐỂ LỖI ĐÈ STYLE HOÀN TOÀN Ở CHẾ ĐỘ LANGUAGE
-// ==========================================================================
 function updateProgress() {
     const totalDiscoverable = activeWords.length;
     let percentage = totalDiscoverable > 0 ? Math.round((foundCount / totalDiscoverable) * 100) : 0;
@@ -187,11 +205,17 @@ function updateProgress() {
     
     progressPercentage.innerText = `${percentage}%`;
     
-    // LẤY CHẾ ĐỘ MENU HIỆN TẠI ĐỂ KIỂM TRA TRƯỚC KHI ÉP SỰ KIỆN LÊN HOA
     const activeOption = document.querySelector('#dropdown-options li.active');
     const currentTheme = activeOption ? activeOption.getAttribute('data-value') : 'all';
 
-    // Điều khiển ép transform cho hoa nếu đang ở chế độ hiển thị hoa (all hoặc beauty)
+    if (cocoonContainer) {
+        if (currentTheme === 'language') {
+            cocoonContainer.setAttribute('data-stage', String(foundCount));
+        } else {
+            cocoonContainer.setAttribute('data-stage', '0');
+        }
+    }
+
     if (currentTheme === 'all' || currentTheme === 'beauty') {
         const newScale = 0.2 + (percentage / 100) * 1.5; 
         document.documentElement.style.setProperty('--bloom-scale', newScale);
@@ -211,7 +235,6 @@ function updateProgress() {
         if (p4) p4.style.transform = `translate(-50%, 0) rotate(${maxRotationP2P4}deg)`;
         if (p5) p5.style.transform = `translate(-50%, 0) rotate(${maxRotationP1P5}deg)`;
     } 
-    // KHẮC PHỤC: Nếu ở theme language hoặc time, phải xóa SẠCH SÀNH SANH inline style của hoa lập tức!
     else {
         document.documentElement.style.removeProperty('--bloom-scale');
         const petals = document.querySelectorAll('.petal-item');
@@ -220,8 +243,11 @@ function updateProgress() {
         });
     }
 
-    // Xử lý kích hoạt trạng thái đỉnh điểm 100%
+    const handContainer = document.querySelector('.clock-hand-container');
+
     if (percentage === 100) {
+        if (handContainer) handContainer.classList.add('all-found');
+
         if (currentTheme === 'beauty') {
             trigger100PercentSparkles();
         }
@@ -229,15 +255,15 @@ function updateProgress() {
             treeRingsContainer.classList.add('pulse-all');
         }
         
-        // Chỉ kích hoạt quay kim đồng hồ nếu chế độ hiện tại cho phép hiển thị nó
         if (currentTheme !== 'beauty' && currentTheme !== 'language') {
             if (!animationFrameId) {
                 animateClockAndRadar();
             }
         }
     } 
-    // Khi rớt khỏi mốc 100% (Hoặc khi chuyển danh mục trống)
     else {
+        if (handContainer) handContainer.classList.remove('all-found');
+
         if (treeRingsContainer) {
             treeRingsContainer.classList.remove('pulse-all');
         }
@@ -245,18 +271,27 @@ function updateProgress() {
             sparkleContainer.innerHTML = '';
         }
         
-        // NẾU GIẢM HOÀN TOÀN VỀ 0% (Hoặc khi chuyển sang danh mục rỗng như language):
-        // Dừng hoàn toàn kim đồng hồ quay liên tục và reset sạch sẽ style của kim
         if (percentage === 0 || currentTheme === 'language') {
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
                 animationFrameId = null;
             }
             currentClockAngle = 0;
-            const clockHand = document.querySelector('.clock-hand');
-            if (clockHand) {
-                clockHand.style.transform = `rotate(0deg)`;
+            const container = document.querySelector('.clock-hand-container');
+            if (container) {
+                container.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
             }
+            setClockRotation(0);
+        } else {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            const container = document.querySelector('.clock-hand-container');
+            if (container) {
+                container.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+            }
+            setClockRotation(currentClockAngle);
         }
         
         updateRadarScan();
@@ -315,9 +350,7 @@ function removeFromPoemJournal(text) {
     }
 }
 
-// ==========================================================================
-// DROPDOWN MENU & RESET TRẠNG THÁI KHÔNG GIAN
-// ==========================================================================
+// DROPDOWN MENU
 const customDropdown = document.getElementById('custom-dropdown');
 const dropdownSelected = document.getElementById('dropdown-selected');
 const dropdownOptions = document.getElementById('dropdown-options');
@@ -338,17 +371,39 @@ dropdownOptions.querySelectorAll('li').forEach(option => {
         option.classList.add('active');
         customDropdown.classList.remove('open');
         
+        const flowerContainer = document.querySelector('.flower-container');
+        if (flowerContainer) {
+            flowerContainer.style.transition = 'none';
+            document.documentElement.style.setProperty('--bloom-scale', '0.2');
+        }
+
         centerVisual.classList.remove('hide-clock', 'hide-flower');
         document.body.classList.remove('beauty-cursor');
+        document.body.classList.remove('show-language');
+        
+        const cContainer = document.querySelector('.constellation-container');
+        if (cContainer) cContainer.classList.remove('show');
+        resetConstellation();
+
+        if (cocoonContainer) cocoonContainer.setAttribute('data-stage', '0');
+
+        const handContainer = document.querySelector('.clock-hand-container');
+        if (handContainer) handContainer.classList.remove('all-found');
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            if (flowerContainer) flowerContainer.style.transition = '';
+        }));
         
         if (sparkleContainer) sparkleContainer.innerHTML = '';
+        
         if (treeRingsContainer) {
-            treeRingsContainer.innerHTML = '';
+            const allRings = treeRingsContainer.querySelectorAll('.svg-ring');
+            allRings.forEach(ring => ring.classList.remove('active'));
             treeRingsContainer.classList.remove('pulse-all');
         }
         
         currentClockAngle = 0;
-        isReversing = false; // Khởi tạo lại cờ ngược về mặc định khi người dùng chuyển đổi theme menu
+        isReversing = false; 
         
         if (animationFrameId) {
             cancelAnimationFrame(animationFrameId);
@@ -369,12 +424,16 @@ dropdownOptions.querySelectorAll('li').forEach(option => {
             }
             else if (selectedTheme === 'language') {
                 centerVisual.classList.add('hide-clock', 'hide-flower');
+                document.body.classList.add('show-language');
+                if (cContainer) cContainer.classList.add('show');
             }
         }
         
         foundCount = 0;
         updateProgress();
+        
         initOrbitLayout();
+        initConstellationInteraction(); 
     });
 });
 
@@ -382,14 +441,16 @@ window.addEventListener('click', () => {
     customDropdown.classList.remove('open');
 });
 
-window.addEventListener('DOMContentLoaded', initOrbitLayout);
+window.addEventListener('DOMContentLoaded', () => {
+    initOrbitLayout();
+    initConstellationInteraction();
+});
+
 window.addEventListener('resize', () => {
     initOrbitLayout();
 });
 
-// ==========================================================================
-// LOGIC ĐIỀU KHIỂN SỰ KIỆN ẨN / HIỆN INFORMATION PANEL
-// ==========================================================================
+// INFORMATION PANEL
 const infoBtn = document.getElementById('info-btn');
 const infoPanelOverlay = document.getElementById('info-panel-overlay');
 const infoCloseBtn = document.getElementById('info-close-btn');
@@ -414,3 +475,85 @@ if (infoPanelOverlay) {
         }
     });
 }
+
+// ========== CONSTELLATION (LANGUAGE THEME) ==========
+
+let constellationBound = false;
+
+function initConstellationInteraction() {
+    if (constellationBound) return;
+
+    const starsGroup = document.getElementById('stars-group')
+        || document.querySelector('.constellation-stars');
+
+    if (!starsGroup) return;
+
+    starsGroup.addEventListener('click', (e) => {
+        const targetStar = e.target.closest('.constellation-star');
+        if (!targetStar) return;
+
+        playClickSound(); // SOUND
+        e.stopPropagation();
+
+        if (targetStar.classList.contains('activated-star')) return;
+
+        targetStar.classList.add('activated-star');
+
+        const allStars = Array.from(starsGroup.querySelectorAll('.constellation-star'));
+        const clickedIndex = allStars.indexOf(targetStar);
+
+        const allLabels = document.querySelectorAll('.constellation-labels text');
+        if (allLabels[clickedIndex]) {
+            allLabels[clickedIndex].classList.add('show-label');
+        }
+
+        const allLines = document.querySelectorAll('.constellation-lines line');
+        allLines.forEach(line => {
+            const pair = line.getAttribute('data-pair');
+            if (!pair) return;
+            const parts = pair.split('-').map(Number);
+            const a = parts[0], b = parts[1];
+            if (allStars[a] && allStars[b] &&
+                allStars[a].classList.contains('activated-star') &&
+                allStars[b].classList.contains('activated-star')) {
+                line.classList.add('show-line');
+            }
+        });
+
+        const activatedCount = starsGroup.querySelectorAll('.constellation-star.activated-star').length;
+        const percentage = Math.round((activatedCount / allStars.length) * 100);
+
+        const hudProgress = document.getElementById('progress-percentage');
+        if (hudProgress) {
+            hudProgress.innerText = `${percentage}%`;
+        }
+
+        const cContainer = document.querySelector('.constellation-container');
+        if (activatedCount === allStars.length && cContainer) {
+            cContainer.classList.add('breathing');
+        }
+    });
+
+    constellationBound = true;
+}
+
+function resetConstellation() {
+    const cContainer = document.querySelector('.constellation-container');
+    if (cContainer) cContainer.classList.remove('breathing');
+
+    const hudProgress = document.getElementById('progress-percentage');
+    if (hudProgress) hudProgress.innerText = `0%`;
+}
+
+// TỰ ĐỘNG ĐÓN NHẬN TÍN HIỆU ĐIỀU HƯỚNG THEME TỪ TRANG CHỦ
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const receivedTheme = urlParams.get('theme');
+
+    if (receivedTheme) {
+        const matchedOption = document.querySelector(`#dropdown-options li[data-value="${receivedTheme}"]`);
+        if (matchedOption) {
+            matchedOption.click(); 
+        }
+    }
+});

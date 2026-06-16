@@ -1,7 +1,6 @@
     :root {
         
-        --text-primary: #5c4d3c;
-        --text-faded: rgba(92, 77, 60, 0.15);
+        --text-primary: #ffffff;
         --accent-color: #8fa87b;
     }
 
@@ -55,6 +54,11 @@
         transform-origin: bottom center;
         /* XÓA HOẶC BỎ DÒNG TRANSITION Ở ĐÂY ĐỂ TRÁNH BỊ GIẬT NGƯỢC GÓC 0-360 */
     }
+    body:not(.beauty-cursor):not(.show-language):not(:has(#dropdown-options li[data-value="time"].active)) .clock-hand-container {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
 
    /* ==========================================================================
    CẬP NHẬT: HẠ THẤP CỤM HOA XUỐNG DƯỚI MỘT CHÚT
@@ -142,28 +146,28 @@
     /* TỰ ĐỘNG: Khi được quét qua theo chiều kim đồng hồ, chữ sẽ hiện rõ lên từ từ */
     .excavated-word.revealed {
         opacity: 0.25; /* Hiện rõ hơn mức bình thường một chút */
-        filter: blur(0.5px);
+        
     }
 
     /* THỦ CÔNG: Khi hover chuột vào (Bất kể đã được quét qua hay chưa) */
     .excavated-word:hover {
         opacity: 1 !important; /* Ưu tiên đè lên trạng thái tự động */
-        filter: blur(0px) !important;
-        text-shadow: 0 0 10px #ffffff, 0 0 20px rgba(92, 77, 60, 0.5); 
+        
     }
 
     /* Khi đã được click chọn để lưu vào tập thơ */
     .excavated-word.found {
         opacity: 1 !important;
-        filter: blur(0px) !important;
-        text-shadow: 0 0 12px #ffffff, 0 0 25px var(--accent-color);
+       
+
+
     }
     .poetry-panel {
        position: absolute;
     top: 40px;
     left: 40px;
     width: 320px;
-    background: rgba(242, 231, 201, 0.85);
+    background: rgba(0, 0, 0, 0.85);
     padding: 20px;
     border: 1px solid var(--text-faded);
     z-index: 10;
@@ -198,8 +202,8 @@
         to { opacity: 1; transform: translateY(0); }
     }
     :root {
-        --bg-color: #000000;
-        --text-primary: #5c4d3c;
+        --bg-color: #0F0F0F;
+        --text-primary: #ffffff;
         --text-faded: rgba(92, 77, 60, 0.15);
         --accent-color: #8fa87b;
     }
@@ -212,8 +216,8 @@
     }
 
     body {
-        background-color:#eaeae5;
-        font-family: 'Courier New', Courier, monospace;
+        background-color:#0F0F0F;
+        font-family: Ocr-A Std, monospace, serif;
         color: var(--text-primary);
         overflow: hidden;
         height: 100vh;
@@ -312,7 +316,7 @@
     /* Hiệu ứng khi di chuột qua các mục lựa chọn (Không còn box xám của hệ thống) */
     .dropdown-options li:hover {
         background-color: var(--text-primary); /* Đổi màu nền theo tone bài thơ khi hover */
-        color: #ffffff;                        /* Chữ chuyển trắng */
+        color: #bfbfbf;                        /* Chữ chuyển trắng */
     }
 
     /* Đánh dấu mục đang được chọn */
@@ -368,8 +372,7 @@
         position: relative;
         width: 40px;
         height: 40px;
-        transform: scale(var(--bloom-scale, 0.2));
-        transition: transform 0.5s ease-out;
+       
     }
 
     .petal {
@@ -495,20 +498,45 @@
     .center-visual.hide-clock .clock-hand {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+       
     }
 
     /* Khi chọn danh mục khác (như Language): Nếu bạn muốn ẩn hoa chỉ hiện đồng hồ thì dùng thêm đoạn này (tùy chọn) */
     .center-visual.hide-flower .flower-container {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+       
     }
+.clock-hand-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 150px;
+    transform: translate(-50%, -100%) rotate(0deg);
+    transform-origin: 50% 100%;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.4s ease;
+}
 
-    /* Thêm transition cho việc ẩn hiện mượt mà hơn */
-    .clock-dial, .clock-hand, .flower-container {
-        transition: opacity 0.5s ease, transform 0.5s ease-out;
-    }
+.clock-hand {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.clock-hand-container.all-found {
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 1))
+            drop-shadow(0 0 12px rgba(255, 255, 255, 0.7))
+            drop-shadow(0 0 30px rgba(255, 245, 220, 0.4));
+    transition: filter 0.8s ease;
+}
+.center-visual.hide-clock .clock-hand-container {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+  
 
 
     /* Ẩn kim và vòng tròn đồng hồ */
@@ -516,14 +544,14 @@
     .center-visual.hide-clock .clock-hand {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+    
     }
 
     /* Ẩn bông hoa ở tâm */
     .center-visual.hide-flower .flower-container {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+        
     }
 
     /* ==========================================================================
@@ -550,7 +578,6 @@
     
     /* Mặc định ẩn đi, chỉ hiện ở chế độ beauty (Giữ nguyên các thuộc tính này) */
     opacity: 0;
-    transition: opacity 0.5s ease;
 }
 /* ==========================================================================
    TINH CHỈNH: DỊCH THÂN VÀ NHỊ HOA SANG TRÁI MỘT CHÚT CỐ ĐỊNH
@@ -561,20 +588,18 @@
     position: absolute;
     bottom: 10%;
     left: 37%;
-    /* Bổ sung thêm -7px (thành -50% - 7px) để ép cành hoa dịch hẳn sang bên trái */
     transform: translateX(calc(-60% - 7px)); 
     width: 5px;
     height: 200px;
     background-color: #6b8c42; 
     border-radius: 2px;
     z-index: -1;
+    filter: drop-shadow(0 0 6px rgba(107, 140, 66, 0.7)) drop-shadow(0 0 14px rgba(107, 140, 66, 0.4));
 }
 
-/* Nhị hoa tròn ở tâm gốc cánh hoa */
 .flower-center {
     position: absolute;
     left: 37%;
-    /* Đồng bộ dịch nhị hoa sang trái -7px để luôn dính liền với đầu cành hoa */
     transform: translateX(calc(-50% - 7px)); 
     width: 14px;
     height: 14px;
@@ -582,6 +607,7 @@
     border-radius: 50%;
     bottom: 193px;
     z-index: 10;
+    box-shadow: 0 0 8px rgba(74, 99, 45, 0.8), 0 0 20px rgba(107, 140, 66, 0.5), 0 0 35px rgba(143, 168, 123, 0.3);
 }
 
     /* Khung định vị gốc tọa độ chụm của các cánh hoa */
@@ -601,7 +627,7 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: bottom center;
-        opacity: 0.65; /* Độ trong suốt chồng lớp hạt cánh hoa mượt mà */
+        opacity: 0.75; /* Độ trong suốt chồng lớp hạt cánh hoa mượt mà */
         
         /* QUAN TRỌNG: Đặt tâm xoay nằm ở chính giữa góc đáy của cánh hoa */
         transform-origin: bottom center; 
@@ -612,18 +638,7 @@
         transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease;
     }
 
-    /* --------------------------------------------------------------------------
-    TRẠNG THÁI MẶC ĐỊNH: Hoa khép lại (Hình thứ 2)
-    Tất cả các cánh hoa chụm sát nhau về trục dọc giữa
-    -------------------------------------------------------------------------- */
-    /* --------------------------------------------------------------------------
-   TRẠNG THÁI HOVER: Hoa xòe rộng ra hai bên (Tăng biên độ góc xoay)
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   TRẠNG THÁI TIẾN TRÌNH: Khi click vào chữ, hoa tự giữ độ xoè cố định 
-   (Giúp bổ trợ cho thuộc tính scale biến số tiến độ của JavaScript)
-   -------------------------------------------------------------------------- */
+  
 /* Nếu bạn muốn hoa tự hé mở cố định một chút mỗi khi "đào" được chữ mà không cần hover, 
    CSS có thể can thiệp bằng cách tăng nhẹ góc mặc định lên như sau: */
 
@@ -631,7 +646,7 @@
     .flower-container {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+       
     }
 
     /* CHỈ KHI chọn 'beauty' (khi đó JS sẽ xóa class .hide-flower và giữ lại class .hide-clock), hoa mới hiện lên */
@@ -689,12 +704,61 @@
     }
 }
 
+
 /* ==========================================================================
    TIME MODE: CÁC VÒNG NĂM CỦA GỖ (TREE RINGS) TRUNG TÂM
    ========================================================================== */
 
 /* Khung bọc tổng thể nằm chuẩn tâm đồng hồ */
+/* Container trung tâm */
+#tree-rings-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 440px;
+    height: 440px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
 
+/* Định nghĩa chung cho các vòng SVG raw */
+.svg-ring {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.6); /* Thu nhỏ nhẹ khi ẩn để lúc xuất hiện xòe rộng ra */
+    transition: opacity 0.5s ease-in-out, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.5s;
+}
+
+/* Ép kích thước chuẩn tăng dần theo từng cấp độ vân gỗ */
+#svg-ring-1 { width: 56px;  height: 63px;  z-index: 6; }
+#svg-ring-2 { width: 157px; height: 163px; z-index: 5; }
+#svg-ring-3 { width: 245px; height: 228px; z-index: 4; }
+#svg-ring-4 { width: 318px; height: 307px; z-index: 3; }
+#svg-ring-5 { width: 373px; height: 373px; z-index: 2; }
+#svg-ring-6 { width: 440px; height: 439px; z-index: 1; }
+
+/* Màu sắc của vân gỗ đồng bộ với các mã màu cls-1 của bạn */
+#svg-ring-1 path { fill: #8e8676; }
+#svg-ring-2 path { fill: #9b9284; }
+#svg-ring-3 path { fill: #aaa18f; }
+#svg-ring-4 path { fill: #b2aa98; }
+#svg-ring-5 path, #svg-ring-6 path { fill: #ccc3b8; }
+
+/* Trạng thái KÍCH HOẠT HIỂN THỊ (Khi click chữ xuôi) */
+.svg-ring.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Trạng thái ẩn hoàn toàn khi đổi sang theme khác */
+.center-visual.hide-flower #tree-rings-container {
+    display: flex; /* Đảm bảo giữ layout flex */
+}
 
 /* Chỉ hiển thị khi dropdown chọn chế độ TIME (tức là khi có class .hide-flower) */
 .center-visual.hide-flower .tree-rings-container {
@@ -811,7 +875,7 @@
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+    
 }
 
 /* 2. Khi ở chế độ TIME hoặc LANGUAGE (có class .hide-flower): Ẩn SẠCH SÀNH SANH toàn bộ cấu trúc hoa */
@@ -819,14 +883,334 @@
 .center-visual.hide-flower .flower-stem,
 .center-visual.hide-flower .flower-petals,
 .center-visual.hide-flower .petal-item,
-.center-visual.hide-flower .flower-center {
+.center-visual.hide-flower .flower-center
+ {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
+   
+}
+.center-visual.hide-clock .flower-container {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+================================================================== */
+
+
+/* ==========================================================================
+   LANGUAGE THEME: COCOON -> BUTTERFLY (5 STAGES)
+   ========================================================================== */
+
+
+
+body.show-language .cocoon-container {
+    opacity: 1;
 }
 
-/* Thêm transition mặc định cho các thành phần con để lúc chuyển đổi danh mục không bị giật lag */
-.clock-dial, .clock-hand, .flower-container, .flower-stem, .petal-item, .flower-center {
-    transition: opacity 0.4s ease, transform 0.4s ease-out, visibility 0.4s ease;
+/* ==========================================================================
+   LANGUAGE THEME: COCOON -> BUTTERFLY (5 STAGES, FADE ONLY)
+   ========================================================================== */
+
+.cocoon-container {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.65);
+    transform-origin: center center;
+    width: 684px;
+    height: 570px;
+    pointer-events: none;
+    z-index: 7;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+body.show-language .cocoon-container {
+    opacity: 1;
+}
+
+.cocoon-layer {
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.cocoon-layer svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Stage 0: vỏ kén luôn hiện sẵn */
+.cocoon-body {
+    top: 0; left: 0;
+    width: 684px; height: 570px;
+    opacity: 1;
+}
+
+/* Thân bướm trắng bên trong kén */
+.cocoon-inner {
+    top: 150px; left: 297px;
+    width: 90px; height: 242px;
+}
+
+/* Hai cánh — giữ nguyên vị trí xòe sẵn, chỉ fade in */
+.cocoon-wing-left {
+    top: 150px; left: 47px;
+    width: 289px; height: 330px;
+}
+
+.cocoon-wing-right {
+    top: 150px; left: 336px;
+    width: 291px; height: 332px;
+}
+
+/* ---- Stage >= 1: thân bướm trắng hiện ---- */
+.cocoon-container[data-stage="1"] .cocoon-inner,
+.cocoon-container[data-stage="2"] .cocoon-inner,
+.cocoon-container[data-stage="3"] .cocoon-inner,
+.cocoon-container[data-stage="4"] .cocoon-inner,
+.cocoon-container[data-stage="5"] .cocoon-inner {
+    opacity: 1;
+}
+
+/* ---- Stage >= 2: cánh trái hiện ---- */
+.cocoon-container[data-stage="2"] .cocoon-wing-left,
+.cocoon-container[data-stage="3"] .cocoon-wing-left,
+.cocoon-container[data-stage="4"] .cocoon-wing-left,
+.cocoon-container[data-stage="5"] .cocoon-wing-left {
+    opacity: 1;
+}
+
+/* ---- Stage >= 3: cánh phải hiện ---- */
+.cocoon-container[data-stage="3"] .cocoon-wing-right,
+.cocoon-container[data-stage="4"] .cocoon-wing-right,
+.cocoon-container[data-stage="5"] .cocoon-wing-right {
+    opacity: 1;
+}
+
+/* ---- Stage >= 4: vỏ kén mờ dần đi ---- */
+.cocoon-container[data-stage="4"] .cocoon-body,
+.cocoon-container[data-stage="5"] .cocoon-body {
+    opacity: 0.1;
+}
+
+/* ---- Stage 5: bướm hoàn chỉnh — đập cánh nhẹ + glow ấm ---- */
+
+.cocoon-container[data-stage="5"] .cocoon-wing-left {
+    transform-origin: 100% 12%;
+    animation: flapLeft 2.6s ease-in-out infinite;
+}
+
+.cocoon-container[data-stage="5"] .cocoon-wing-right {
+    transform-origin: 0% 12%;
+    animation: flapRight 2.6s ease-in-out infinite;
+}
+
+.cocoon-container[data-stage="5"] .cocoon-inner {
+    animation: cocoonGlow 2.6s ease-in-out infinite;
+}
+
+.cocoon-container[data-stage="5"] .cocoon-wing-left,
+.cocoon-container[data-stage="5"] .cocoon-wing-right {
+    filter: drop-shadow(0 0 6px rgba(247, 255, 129, 0.454))
+            drop-shadow(0 0 20px rgba(255, 255, 255, 0.856));
+}
+
+@keyframes flapLeft {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50%      { transform: rotate(6deg) scale(0.985); }
+}
+
+@keyframes flapRight {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50%      { transform: rotate(-6deg) scale(0.985); }
+}
+
+@keyframes cocoonGlow {
+    0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 220, 150, 0.2)); }
+    50%      { filter: drop-shadow(0 0 20px rgba(255, 200, 100, 0.55))
+                       drop-shadow(0 0 40px rgba(255, 230, 180, 0.2)); }
+}
+.cocoon-wing-left {
+    top: 150px; left: 59px; /* về giá trị gốc */
+    width: 289px; height: 330px;
+}
+
+
+/* ==========================================================================
+   MÃ CSS CHUYÊN BIỆT DÀNH RIÊNG CHO TRANG HOME (INDEX.HTML / HOME)
+   ========================================================================== */
+
+/* 1. KHUNG CẤU TRÚC PHÂN TẦNG KHÔNG GIAN BỌC NGOÀI */
+.home-canvas {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0F0F0F; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.home-orbit-wrapper {
+    position: relative;
+    width: 682px;
+    height: 648px;
+    display: flex;
+    justify-content: center;
+    transform: scale(0.96);
+    align-items: center;
+}
+
+
+/* ==========================================================================
+   ĐÃ SỬA: PHÓNG TO SVG CHỮ EMERGENCE TRUNG TÂM THEO TỶ LỆ ẢNH MẪU
+   ========================================================================== */
+.home-center-title {
+    position: absolute;
+    /* ĐÃ SỬA: Tăng kích thước hộp chứa từ 640x338 lên 940x412 để chữ bung to rộng ra */
+    width: 1040px; 
+    height: 412px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    z-index: 10;
+    
+    
+}
+
+
+/* Ẩn hoàn toàn các dòng subtitle text cũ của bạn */
+.home-subtitle {
+    display: none !important;
+}
+
+/* 3. HỆ THỐNG HOẠT HỌA XOAY LY TÂM (QUAY QUANH TÂM - KHÔNG TỰ QUAY TẠI CHỖ) */
+.home-icon-orbit-spinner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 6;
+    pointer-events: auto;
+    
+}
+
+/* Khung bọc 250px định vị găm 3 góc lệch đúng 120 độ trên quỹ đạo lớn */
+.home-node-item {
+    position: absolute ;
+    width: 260px !important;
+    height: 260px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    transform-origin: center center !important;
+}
+
+/* Tọa độ X-Y đẩy các node bung rộng ra rìa, ôm khít 3 cung tròn đứt nét */
+.node-flower {
+    top: -145px !important;
+    left: calc(50% - 125px) !important;
+}
+
+.node-wood {
+    bottom: -125px !important;
+    left: 65px !important;
+}
+
+.node-butterfly {
+    bottom: -125px !important;
+    right: 65px !important;
+}
+
+/* 4. ĐỊNH DẠNG HÌNH ẢNH 210PX VÀ CHUYỂN ĐỘNG TRIỆT TIÊU LỘN HÌNH */
+.home-img-asset {
+    display: block !important;
+    width: 210px !important; 
+    height: 210px !important;
+    object-fit: contain !important;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+    
+    /* Ép xoay ngược chiều đúng 80s để triệt tiêu việc tự lộn ngược đầu */
+    animation: counterNodeRotation 80s linear infinite; 
+}
+
+/* Hiệu ứng bừng sáng nghệ thuật khi hover chuột chọn danh mục */
+.home-node-item:hover .home-img-asset {
+    transform: scale(1.08) !important;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.45)) !important;
+}
+.home-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: lowercase; /* Giữ phom chữ thường đồng bộ với thiết kế */
+    padding: 6px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.25);       /* Bo tròn mềm mại đồng bộ với dropdown */
+    background: transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.home-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+.big-circle {
+    transform: translateY(15px);
+    scale: 0.8;
+}
+/* ==========================================================================
+   CSS ĐỊNH VỊ DÒNG CHỮ HƯỚNG DẪN "CHOOSE A THEME" TRANG CHỦ
+   ========================================================================== */
+/* ==========================================================================
+   CSS ĐỊNH VẠNG VÀ TẠO HIỆU ỨNG NHẤP NHÁY (PULSE ANIMATION) CHO DÒNG CHỮ
+   ========================================================================== */
+
+.home-subtitle-guide {
+    position: absolute;
+    bottom: 110px; /* Vị trí lọt lòng hoàn hảo dưới chữ emergence */
+    left: 55%;
+    transform: translateX(-50%);
+    
+    color: #CCC3B8;
+    font-family: 'OCR A Std', monospace;
+    font-size: 15px;
+    letter-spacing: 2px;
+    margin: 0;
+    padding: 0;
+    z-index: 5;
+    pointer-events: none;
+    
+    /* ĐÃ THÊM: Kích hoạt hiệu ứng nhấp nháy tuần hoàn mượt mà (chu kỳ 3 giây lặp vô hạn) */
+    animation: textPulseBreathe 3s ease-in-out infinite;
+}
+
+/* --------------------------------------------------------------------------
+   KEYFRAMES TẠO NHỊP THỞ MỜ ẢO CHO CHỮ (TỪ 0.2 ĐẾN 0.9 ĐỘ MỜ)
+   -------------------------------------------------------------------------- */
+@keyframes textPulseBreathe {
+    0% {
+        opacity: 0.2;
+        text-shadow: 0 0 4px rgba(204, 195, 184, 0);
+    }
+    50% {
+        opacity: 0.9;
+        /* Gợi ý thêm: Tạo một luồng phát quang nhẹ khi chữ sáng rực lên */
+        text-shadow: 0 0 8px rgba(204, 195, 184, 0.4); 
+    }
+    100% {
+        opacity: 0.2;
+        text-shadow: 0 0 4px rgba(204, 195, 184, 0);
+    }
 }
