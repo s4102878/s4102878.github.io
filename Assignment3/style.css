@@ -27,7 +27,7 @@
 
 body {
     background-color: var(--bg-color);
-    font-family: Ocr-A Std, monospace, serif;
+    font-family: 'OCR A Std', 'Courier New', monospace, serif;
     color: var(--text-primary);
     overflow: hidden;
     height: 100vh;
@@ -655,7 +655,7 @@ body.show-language .cocoon-container {
     background: rgba(221, 215, 199, 0.95); 
     border: 1px solid var(--text-primary);
     padding: 30px;
-    width: 500px;
+    width: 700px;
     max-width: 100%;
     position: relative;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -824,6 +824,20 @@ body.show-language .cocoon-container {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.7);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.home-sound-hint {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #CCC3B8;
+    font-family: 'OCR A Std', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    pointer-events: none;
+    margin: 0;
+    white-space: nowrap;   
 }
 
 .big-circle {

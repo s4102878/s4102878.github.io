@@ -16,10 +16,11 @@ let currentClockAngle = 0; // Tracks the clock hand's rotation angle
 let animationFrameId = null;
 let wordElementsArray = [];
 
-const rotationSpeed = 0.4; // Degrees per frame — slow enough to feel deliberate
+const rotationSpeed = 0.4; // Slow rotation 
 
-// Word pool with category tags. 
-// Keeping words and categories together in one array avoids sync bugs
+// Word pool with category tags.
+// Keeping text and category data together avoids sync issues
+// when filtering words by theme.
 const poolOfWords = [
     { text: "accumulation",      category: "time" },
     { text: "searching takes time", category: "time" },
@@ -37,7 +38,7 @@ const poolOfWords = [
     { text: "transformation",    category: "language" },
     { text: "butterfly",         category: "language" }
 ];
-
+// Active word list is filtered from the pool based on theme selection
 let activeWords = [...poolOfWords]; 
 
 // DOM Element Selectors
@@ -53,13 +54,12 @@ const cocoonContainer   = document.getElementById('cocoon-container');
 // =============================================================================
 // 2. SOUND DESIGN
 // =============================================================================
-// Sound reinforces the sense of discovery. Five click sounds are pre-loaded
-// into a pool and played in sequence as foundCount increases. This creates a
-// rising musical arc, the interaction feels like it's building toward something,
-// mirroring the visual progress of each theme. 
-
-// The base sound is royalty-free and was edited by me in REAPER into 5 pitched
-// notes to create a rising tonal sequence.
+// Sound is used as feedback for discovery.
+// Five variations of the same click sound are played in sequence,
+// creating a subtle sense of progression.
+//
+// The original sound is royalty-free and was edited by me in REAPER
+// to create a rising tonal scale.
 
 
 const clickSoundsPool = [
@@ -84,14 +84,29 @@ function playClickSound() {
     }
 }
 
-
 // =============================================================================
 // 3. ORBIT LAYOUT
-// =============================================================================
-// Words orbit the center visual in a circle.
-// Positioning words on a fixed radius also means no word is "first" or "last"
-// visually, discovery order is entirely up to the user
-
+// This removes any visual hierarchy — there is no first or last word.
+// Discovery order is entirely driven by the user.
+/* ==========================================================================
+   AI CITATION: MATH REFLECTION — ASSISTED BY GEMINI
+   --------------------------------------------------------------------------
+   How the orbital word arrangement math works:
+   1. Spacing out the words: (index / totalWords) * 2 * Math.PI takes the total 
+      number of words and distributes them evenly around a full 360-degree circle 
+      (which is 2 * PI in radians). This prevents words from piling up on top of each other.
+      
+   2. Setting the starting point: By default, programming circles start on the 
+      far right (0 radians). Subtracting Math.PI / 2 (90 degrees) shifts the 
+      very first word to the exact top of the circle, aligning it beautifully 
+      with a 12 o'clock layout.
+      
+   3. Plotting the coordinates (Trigonometry): 
+      - Math.cos(angle) calculates how far left/right (X-axis) the word should go.
+      - Math.sin(angle) calculates how far up/down (Y-axis) the word should go.
+      Multiplying these by our radius (220px) pushes them out from the center 
+      to form the perfect orbit ring on the screen.
+   ========================================================================== */
 
 function setClockRotation(angleDeg) {
     // Preserves translate so only rotation changes, avoids resetting position
@@ -118,16 +133,16 @@ function initOrbitLayout() {
         wordEl.innerText = item.text;
         wordEl.classList.add('excavated-word');
 
-    
-       
-
         // Evenly distribute words around the full circle, starting from top (−π/2)
         const angleRadian = (index / totalWords) * 2 * Math.PI - (Math.PI / 2);
         let angleDegree = (angleRadian * 180) / Math.PI + 90;
         if (angleDegree < 0) angleDegree += 360;
-
+        
+        // Position words neatly on the canvas using the radius distance
         wordEl.style.left = `${centerX + radius * Math.cos(angleRadian)}px`;
         wordEl.style.top  = `${centerY + radius * Math.sin(angleRadian)}px`;
+
+        // Creates a sequential cascade reveal effect when entering a theme
         wordEl.style.setProperty('--unveil-delay', `${index * 0.15}s`);
 
         wordEl.addEventListener('click', () => handleWordClick(wordEl, item, angleDegree, currentTheme));
@@ -145,41 +160,47 @@ function handleWordClick(wordEl, item, angleDegree, currentTheme) {
     if (totalDiscoverable === 0) return;
 
 // Flip to reversing mode once all words are found.
-// The user can then "un-discover" words, allowing the visual system to
+// The user can then "un-click" words, allowing the visual system to
 // retreat back toward its origin state.
-//
 // This was a deliberate design choice inspired by biological systems:
 // growth is not always linear: things can fold back, decay, or reset.
 
     if (Math.round((foundCount / totalDiscoverable) * 100) === 100) {
-        isReversing = true;
+        isReversing = true; // All words clicked → enable reverse interaction mode
     }
 
-    playClickSound();
+    playClickSound(); // Feedback sound for every click 
 
     if (!isReversing) {
+        // Only allow marking a word if it hasn't been clicked yet
+        // and the user hasn't reached the full progress
         if (!wordEl.classList.contains('found') && foundCount < totalDiscoverable) {
             wordEl.classList.add('found');
             foundCount++;
-            currentClockAngle = angleDegree;
-            setClockRotation(currentClockAngle);
+            currentClockAngle = angleDegree; // update clock position based on word location
+            setClockRotation(currentClockAngle); // rotate clock hand 
+            // Visual update depending on theme
             if (currentTheme === 'time') updateSVGRings();
             updateProgress();
-            addToPoemJournal(item.text);
         }
+
+// =========================
+// REVERSE MODE
+// =========================
+// In reverse mode, allow user to undo previously clicked words
     } else {
         if (wordEl.classList.contains('found')) {
             wordEl.classList.remove('found');
             foundCount--;
-            currentClockAngle = angleDegree;
+            currentClockAngle = angleDegree;  // update clock position again
 
             const container = document.querySelector('.clock-hand-container');
+            // Smooth transition for clock hand when reversing
             if (container) container.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
             setClockRotation(currentClockAngle);
 
             if (currentTheme === 'time') updateSVGRings();
             updateProgress();
-            removeFromPoemJournal(item.text);
 
             if (Math.round((foundCount / totalDiscoverable) * 100) === 0) {
                 isReversing = false;
@@ -217,12 +238,9 @@ function stopAnimation() {
     }
 }
 
-
 // =============================================================================
 // 4. PROGRESS & VISUAL FEEDBACK
 // =============================================================================
-
-
 function updateSVGRings() {
     const total = activeWords.length;
     if (total === 0) return;
@@ -251,6 +269,11 @@ function updateProgress() {
     }
 
     // Flower themes: petals spread proportionally to progress.
+    // AI-assisted calculation:
+    // Rotation values for flower petals were calculated with the help of
+    // Google Gemini to ensure symmetrical angular distribution based on
+    // progress percentage. The values were then manually adjusted to better
+    // match the visual balance of the flower bloom.
     if (currentTheme === 'all' || currentTheme === 'beauty') {
         document.documentElement.style.setProperty('--bloom-scale', 0.2 + (percentage / 100) * 1.5);
         const r1 = (percentage / 100) * 85;
@@ -295,18 +318,36 @@ function updateProgress() {
     }
 }
 
-function trigger100PercentSparkles() {
-    // Sparkles only appear in the "flower" theme 
-    if (!sparkleContainer) return;
-    sparkleContainer.innerHTML = '';
+/* ==========================================================================
+   AI CITATION (ASSISTED BY GEMINI)
+   --------------------------------------------------------------------------
+   I used Gemini AI to help me map out the initial logic framework, math formulas, 
+   and general code layout for this system. After getting the base setup from the 
+   AI, I went through the code myself to clean it up and manually adjust the coordinate
+   positions, color steps, and animation timings to match the goals and the aesthetic 
+   look of my project.
+   ========================================================================== */
 
+// This function generates a burst of "sparkle" particles when a completion in flower theme
+// The decoration reinforcing the idea of blooming completion
+function trigger100PercentSparkles() {
+    if (!sparkleContainer) return;
+    // Clear previous sparkles before generating a new burst
+    sparkleContainer.innerHTML = '';
+    // Create multiple sparkle elements to simulate a particle system
     for (let i = 0; i < 45; i++) {
         const dot = document.createElement('div');
         dot.classList.add('sparkle-dot');
+        // Randomize size to create visual variety 
         const size = Math.random() * 8 + 4;
         dot.style.width  = `${size}px`;
         dot.style.height = `${size}px`;
+        // Spread particles across full viewport width for a "burst" effect
         dot.style.left   = `${Math.random() * 100}vw`;
+        // CSS custom properties used to control animation behavior per particle:
+        // - duration: how long each sparkle lasts
+        // - drift: horizontal floating movement
+        // - max-opacity: variation in brightness
         dot.style.setProperty('--duration',   `${Math.random() * 4 + 3}s`);
         dot.style.setProperty('--drift',      `${(Math.random() * 160) - 80}px`);
         dot.style.setProperty('--max-opacity', Math.random() * 0.5 + 0.5);
@@ -314,7 +355,6 @@ function trigger100PercentSparkles() {
         sparkleContainer.appendChild(dot);
     }
 }
-
 
 // =============================================================================
 // JOURNAL
@@ -340,7 +380,6 @@ function removeFromPoemJournal(text) {
         poemList.appendChild(hint);
     }
 }
-
 
 // =============================================================================
 // 5. UI CONTROLS
