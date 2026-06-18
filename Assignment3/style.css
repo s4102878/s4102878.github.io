@@ -27,7 +27,7 @@
 
 body {
     background-color: var(--bg-color);
-    font-family: 'OCR A Std', 'Courier New', monospace, serif;
+    font-family: 'OCR A Std', monospace, serif;
     color: var(--text-primary);
     overflow: hidden;
     height: 100vh;
